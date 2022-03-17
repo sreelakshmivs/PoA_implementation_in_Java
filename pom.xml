@@ -16,6 +16,7 @@
 
 	<properties>
 		<java.version>11</java.version>
+		<http.client.version>4.5.8</http.client.version>
 	</properties>
 
 	<dependencies>
@@ -73,7 +74,11 @@
 			<artifactId>spring-data-rest-hal-browser</artifactId>
 			<version>3.3.7.RELEASE</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>${http.client.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
