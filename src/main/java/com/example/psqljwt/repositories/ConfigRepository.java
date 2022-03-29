@@ -1,6 +1,6 @@
 package com.example.psqljwt.repositories;
 
-import com.example.psqljwt.domain.Poa;
+import com.example.psqljwt.domain.Config;
 import com.example.psqljwt.exceptions.EtAuthException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -14,39 +14,49 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 
 @Repository
-public class PoaRepository {
+public class ConfigRepository {
 
     private static final String SQL_INSERT =
-            "INSERT INTO poa(id, poa) VALUES(NEXTVAL('poa_seq'), ? )";
+            "INSERT INTO config(id, destinationNetworkId, metadata, transferable) VALUES(NEXTVAL('poa_SEQ'), ?, ?, ? )";
     private static final String SQL_GET_LATEST = "SELECT * FROM poa ORDER BY id DESC LIMIT 1";
 
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    public Integer write(final String poa) throws EtAuthException {
+    public Integer write(
+            final String destinationNetworkId,
+            final String transferable,
+            final String metadata) throws EtAuthException {
+
         try {
-            final KeyHolder keyHolder = new GeneratedKeyHolder();
+            KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcTemplate.update(connection -> {
                 PreparedStatement ps =
                         connection.prepareStatement(SQL_INSERT, Statement.RETURN_GENERATED_KEYS);
-                ps.setString(1, poa);
+                ps.setString(1, destinationNetworkId);
+                ps.setString(2, metadata);
+                ps.setString(3, transferable);
                 return ps;
             }, keyHolder);
             return (Integer) keyHolder.getKeys().get("id");
         } catch (Exception e) {
-            throw new EtAuthException("Invalid details. Failed to store PoA");
+            throw new EtAuthException("Invalid details. Failed to store configuration");
         }
     }
 
-    public Poa readLatest() throws EtAuthException {
+    public Config readLatest() throws EtAuthException {
         try {
             return jdbcTemplate.queryForObject(SQL_GET_LATEST, userRowMapper);
         } catch (EmptyResultDataAccessException e) {
-            throw new EtAuthException("Invalid clientId/password");
+            throw new EtAuthException("No configuration found");
         }
     }
 
-    private RowMapper<Poa> userRowMapper = ((rs, rowNum) -> {
-        return new Poa(rs.getInt("id"), rs.getString("poa"));
+    private RowMapper<Config> userRowMapper = ((rs, rowNum) -> {
+        return new Config(
+                rs.getInt("id"),
+                rs.getString("destinationNetworkId"),
+                rs.getString("metadata"),
+                rs.getString("transferable"));
     });
 }

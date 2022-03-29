@@ -1,6 +1,7 @@
 package com.example.psqljwt.resources;
 
 import com.example.psqljwt.Constants;
+import com.example.psqljwt.repositories.ConfigRepository;
 import com.example.psqljwt.repositories.PoaRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -19,10 +21,13 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/subcontractor")
-public class PoaController {
+public class Controller {
 
     @Autowired
-    PoaRepository userRepository;
+    PoaRepository poaRepository;
+
+    @Autowired
+    ConfigRepository configRepository;
 
     @Autowired
     RestTemplate restTemplate;
@@ -42,32 +47,43 @@ public class PoaController {
                     HttpStatus.BAD_GATEWAY);
         }
         final String poa = response.getBody();
-        System.out.println(poa);
         // TODO: Some minimal error checking
-        userRepository.writePoa(poa);
+        poaRepository.write(poa);
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 
-    @PostMapping("/poa-subcontractor")
-    public ResponseEntity<Map<String, String>> registerUser() {
+    @PostMapping("/config")
+    public ResponseEntity<Map<String, String>> createConfig(
+            @RequestBody final Map<String, String> config) {
+        configRepository.write(
+                config.get("destinationNetworkId"),
+                config.get("transferable"),
+                config.get("metadata"));
         return new ResponseEntity<>(generateJWTToken(), HttpStatus.OK);
     }
-    
+
+    @GetMapping("/poa-subcontractor")
+    public ResponseEntity<Map<String, String>> generatePoaSubcontractor() {
+        return new ResponseEntity<>(generateJWTToken(), HttpStatus.OK); // Pass along the device's
+                                                                        // public key
+    }
+
     private Map<String, String> generateJWTToken() {
         long timestamp = System.currentTimeMillis();
-        final String poa = userRepository.readLatestPoa();
         // TODO: Handle the case where this is null.
+        final String poa = poaRepository.readLatest().getPoa();
 
-        final String token = Jwts.builder().signWith(SignatureAlgorithm.HS256, Constants.API_SECRET_KEY)
-                .setIssuedAt(new Date(timestamp))
-                .setExpiration(new Date(timestamp + Constants.TOKEN_VALIDITY))
-                // TODO: Change these claims
-                .claim("destinationNetworkId", "xyz")
-                .claim("metadata", "abc")
-                .claim("transferable", "0")
-                .claim("proofOfChain", poa) // TODO: What do we do here?
-                .compact();
-                
+        final String token =
+                Jwts.builder().signWith(SignatureAlgorithm.HS256, Constants.API_SECRET_KEY)
+                        .setIssuedAt(new Date(timestamp))
+                        .setExpiration(new Date(timestamp + Constants.TOKEN_VALIDITY))
+                        // TODO: Change these claims
+                        .claim("destinationNetworkId", "xyz")
+                        .claim("metadata", "abc")
+                        .claim("transferable", "0")
+                        .claim("proofOfChain", poa) // TODO: What do we do here?
+                        .compact();
+
         return Map.of("token", token);
     }
 }

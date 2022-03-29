@@ -2,15 +2,15 @@ package com.example.psqljwt.domain;
 
 public class Poa {
 
-    private Integer id;
-    private String poa;
+    private final int id;
+    private final String poa;
 
-    public Poa(final Integer id, final String poa) {
+    public Poa(final int id, final String poa) {
         this.id = id;
         this.poa = poa;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
