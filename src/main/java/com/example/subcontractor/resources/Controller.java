@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.Map;
 import com.example.subcontractor.Constants;
 import com.example.subcontractor.domain.Config;
+import com.example.subcontractor.exceptions.BadGatewayException;
 import com.example.subcontractor.repositories.ConfigRepository;
 import com.example.subcontractor.repositories.PoaRepository;
 
@@ -42,20 +43,18 @@ public class Controller {
     }
 
     @GetMapping("/poa-onboarding-user-request")
-    public ResponseEntity<String> fetchOnboardingPoa() {
+    public String fetchOnboardingPoa() {
         HttpEntity<String> response;
         try {
             response = restTemplate.getForEntity(AH_ONBOARDING_URI, String.class);
         } catch (Exception ex) {
             System.out.println(ex);
-            return new ResponseEntity<>(
-                    "Failed to retrieve PoA from Arrowhead PoaOnboarding controller",
-                    HttpStatus.BAD_GATEWAY);
+            throw new BadGatewayException("Failed to retrieve PoA from Arrowhead PoaOnboarding controller");
         }
         final String poa = response.getBody();
         // TODO: Some minimal error checking
         poaRepository.write(poa);
-        return new ResponseEntity<>("OK", HttpStatus.OK);
+        return "PoA successfully retrieved from the PoA Onboarding controller.";
     }
 
     @GetMapping("/config")
@@ -64,13 +63,13 @@ public class Controller {
     }
 
     @PostMapping("/config")
-    public ResponseEntity<Map<String, String>> createConfig(
+    public String createConfig(
             @RequestBody final Map<String, String> config) {
         configRepository.write(
                 config.get("destinationNetworkId"),
                 config.get("transferable"),
                 config.get("metadata"));
-        return new ResponseEntity<>(generateJWTToken(), HttpStatus.OK);
+        return "Configuration successfully stored in the database";
     }
 
     @GetMapping("/poa-subcontractor")
