@@ -3,19 +3,21 @@ package com.example.subcontractor.domain;
 public class Poa {
 
     private final int id;
-    private final String poa;
+    private final String destinationNetworkId;
 
-    public Poa(final int id, final String poa) {
+    // The rest of the PoA fields are not used at the moment.
+
+    public Poa(final int id, final String destinationNetworkId) {
         this.id = id;
-        this.poa = poa;
+        this.destinationNetworkId = destinationNetworkId;
     }
 
     public int getId() {
         return id;
     }
 
-    public String getPoa() {
-        return poa;
+    public String getDestinationNetworkId() {
+        return destinationNetworkId;
     }
 
 }
