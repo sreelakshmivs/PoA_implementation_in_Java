@@ -1,9 +1,7 @@
 package com.example.subcontractor.resources;
 
-import java.util.Date;
 import java.util.Map;
-import com.example.subcontractor.Constants;
-import com.example.subcontractor.domain.Poa;
+import com.example.subcontractor.domain.PoaGenerator;
 import com.example.subcontractor.domain.PoaParser;
 import com.example.subcontractor.exceptions.BadGatewayException;
 import com.example.subcontractor.repositories.PoaRepository;
@@ -17,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 
 @RestController
 @RequestMapping("/subcontractor")
@@ -32,6 +28,9 @@ public class Controller {
 
     @Autowired
     PoaParser poaParser;
+
+    @Autowired
+    PoaGenerator poaGenerator;
 
     @Value("${ah_onboarding_uri}")
     private String AH_ONBOARDING_URI;
@@ -61,25 +60,8 @@ public class Controller {
 
     @GetMapping("/poa-subcontractor")
     public ResponseEntity<Map<String, String>> generatePoaSubcontractor() {
-        final Map<String, String> responseBody = Map.of("token", generatePoa());
+        final Map<String, String> responseBody = Map.of("token", poaGenerator.generate());
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
-    }
-
-    private String generatePoa() {
-        long timestamp = System.currentTimeMillis();
-        // TODO: Handle the case where this is null.
-        final Poa poaOnboarding = poaRepository.readLatest();
-
-        return Jwts.builder()
-                .signWith(SignatureAlgorithm.HS256, Constants.API_SECRET_KEY)
-                .setIssuedAt(new Date(timestamp))
-                .setExpiration(new Date(timestamp + Constants.TOKEN_VALIDITY))
-                // TODO: Change these claims
-                .claim("destinationNetworkId", poaOnboarding.getDestinationNetworkId())
-                .claim("metadata", "abc")
-                .claim("transferable", "0")
-                .claim("proofOfChain", "<Not yet available>")
-                .compact();
     }
 
 }
