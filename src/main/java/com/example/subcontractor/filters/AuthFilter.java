@@ -1,6 +1,5 @@
-package com.example.psqljwt.filters;
+package com.example.subcontractor.filters;
 
-import com.example.psqljwt.Constants;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.http.HttpStatus;
@@ -12,6 +11,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import com.example.subcontractor.Constants;
 import java.io.IOException;
 
 

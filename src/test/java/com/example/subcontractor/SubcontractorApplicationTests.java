@@ -1,10 +1,10 @@
-package com.example.psqljwt;
+package com.example.subcontractor;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class PsqljwtApplicationTests {
+class SubcontractorApplicationTests {
 
 	@Test
 	void contextLoads() {

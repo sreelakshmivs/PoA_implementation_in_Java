@@ -1,4 +1,4 @@
-package com.example.psqljwt;
+package com.example.subcontractor;
 
 import javax.net.ssl.SSLContext;
 import org.springframework.beans.factory.annotation.Value;

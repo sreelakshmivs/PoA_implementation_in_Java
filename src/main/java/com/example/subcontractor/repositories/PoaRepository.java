@@ -1,7 +1,5 @@
-package com.example.psqljwt.repositories;
+package com.example.subcontractor.repositories;
 
-import com.example.psqljwt.domain.Poa;
-import com.example.psqljwt.exceptions.EtAuthException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,6 +10,9 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import com.example.subcontractor.domain.Poa;
+import com.example.subcontractor.exceptions.InternalServerErrorException;
+import com.example.subcontractor.exceptions.NotFoundException;
 
 @Repository
 public class PoaRepository {
@@ -23,7 +24,7 @@ public class PoaRepository {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    public Integer write(final String poa) throws EtAuthException {
+    public Integer write(final String poa) {
         try {
             final KeyHolder keyHolder = new GeneratedKeyHolder();
             jdbcTemplate.update(connection -> {
@@ -34,15 +35,15 @@ public class PoaRepository {
             }, keyHolder);
             return (Integer) keyHolder.getKeys().get("id");
         } catch (Exception e) {
-            throw new EtAuthException("Invalid details. Failed to store PoA");
+            throw new InternalServerErrorException("Failed to store PoA");
         }
     }
 
-    public Poa readLatest() throws EtAuthException {
+    public Poa readLatest() {
         try {
             return jdbcTemplate.queryForObject(SQL_GET_LATEST, userRowMapper);
         } catch (EmptyResultDataAccessException e) {
-            throw new EtAuthException("Invalid clientId/password");
+            throw new NotFoundException("No PoA found");
         }
     }
 

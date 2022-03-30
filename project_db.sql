@@ -1,10 +1,11 @@
-drop database projectdb;
-drop user sree;
-create user sree with password 'password';
-create database projectdb with template=template0 owner=sree;
-\connect projectdb;
-alter default privileges grant all on tables to sree;
-alter default privileges grant all on sequences to sree;
+drop database if exists subcontractor;
+drop user if exists subcontractor;
+
+create user subcontractor with password 'password';
+create database subcontractor with template=template0 owner=subcontractor;
+\connect subcontractor;
+alter default privileges grant all on tables to subcontractor;
+alter default privileges grant all on sequences to subcontractor;
 
 create table poa(
     id integer primary key not null,
@@ -13,7 +14,7 @@ create table poa(
 
 create table config(
     id integer primary key not null,
-    destinationNetworkId text not null,
+    destination_network_id text not null,
     transferable text not null,
     metadata text not null
 );

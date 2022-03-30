@@ -1,8 +1,5 @@
-package com.example.psqljwt.resources;
+package com.example.subcontractor.resources;
 
-import com.example.psqljwt.Constants;
-import com.example.psqljwt.repositories.ConfigRepository;
-import com.example.psqljwt.repositories.PoaRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import java.util.Date;
 import java.util.Map;
+import com.example.subcontractor.Constants;
+import com.example.subcontractor.domain.Config;
+import com.example.subcontractor.repositories.ConfigRepository;
+import com.example.subcontractor.repositories.PoaRepository;
 
 @RestController
 @RequestMapping("/subcontractor")
@@ -35,6 +36,11 @@ public class Controller {
     @Value("${ah_onboarding_uri}")
     private String AH_ONBOARDING_URI;
 
+    @GetMapping("/echo")
+    public String echo() {
+        return "OK";
+    }
+
     @GetMapping("/poa-onboarding-user-request")
     public ResponseEntity<String> fetchOnboardingPoa() {
         HttpEntity<String> response;
@@ -50,6 +56,11 @@ public class Controller {
         // TODO: Some minimal error checking
         poaRepository.write(poa);
         return new ResponseEntity<>("OK", HttpStatus.OK);
+    }
+
+    @GetMapping("/config")
+    public Config getConfig() {
+        return configRepository.readLatest();
     }
 
     @PostMapping("/config")

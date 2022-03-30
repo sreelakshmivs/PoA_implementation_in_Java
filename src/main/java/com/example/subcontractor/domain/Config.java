@@ -1,4 +1,4 @@
-package com.example.psqljwt.domain;
+package com.example.subcontractor.domain;
 
 public class Config {
 
