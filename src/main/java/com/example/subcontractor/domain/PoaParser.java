@@ -44,7 +44,7 @@ public class PoaParser {
             final X509EncodedKeySpec pubKeySpec = new X509EncodedKeySpec(keyBytes);
             return fact.generatePublic(pubKeySpec);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            System.out.println(e);
+            e.printStackTrace();
             throw new InternalServerErrorException("Failed to read PoaOnboarding public key");
         }
     }
@@ -54,7 +54,7 @@ public class PoaParser {
                 new InputStreamReader(ONBOARDING_PUBLIC_KEY.getInputStream(), StandardCharsets.UTF_8)) {
             return FileCopyUtils.copyToString(reader);
         } catch (IOException e) {
-            System.out.println(e);
+            e.printStackTrace();
             throw new InternalServerErrorException("Failed to read PoA onboarding controller public key");
         }
     }
