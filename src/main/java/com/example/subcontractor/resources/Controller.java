@@ -61,9 +61,10 @@ public class Controller {
     }
 
     @PostMapping("/poa-subcontractor")
-    public String generatePoaSubcontractor(
-            final @RequestBody String request) {
-        return poaGenerator.generate(request);
+    public String generatePoaSubcontractor(final @RequestBody Map<String, String> request) {
+        final String agentName = request.get("name");
+        final String agentPublicKey = request.get("publicKey");
+        return poaGenerator.generate(agentName, agentPublicKey);
     }
 
 }

@@ -33,7 +33,7 @@ public class PoaGenerator {
     @Autowired
     PoaRepository poaRepository;
 
-    public String generate(final String agentPublicKey) {
+    public String generate(final String agentName, final String agentPublicKey) {
         long timestamp = System.currentTimeMillis();
         // TODO: Handle the case where this is null.
         final Poa poaOnboarding = poaRepository.readLatest();
@@ -64,14 +64,14 @@ public class PoaGenerator {
                 .claim("proofOfChain", "<Not yet available>") // TODO: Change
                 .claim("principlePublicKey", principlePublicKey)
                 .claim("agentPublicKey", agentPublicKey)
-                .claim("metadata", generateMetadata(principalName))
+                .claim("metadata", generateMetadata(agentName, principalName))
                 .compact();
     }
 
-    private Map<String, String> generateMetadata(final String principalName) {
+    private Map<String, String> generateMetadata(final String agentName, final String principalName) {
         return Map.of(
                 "principalName", principalName,
-                "agentName", "<AGENT NAME>",
+                "agentName", agentName,
                 "credentials", "Submit PoA to the Destination Network ID");
     }
 
