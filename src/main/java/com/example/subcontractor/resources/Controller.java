@@ -61,10 +61,9 @@ public class Controller {
     }
 
     @PostMapping("/poa-subcontractor")
-    public ResponseEntity<Map<String, String>> generatePoaSubcontractor(
+    public String generatePoaSubcontractor(
             final @RequestBody String request) {
-        final Map<String, String> responseBody = Map.of("token", poaGenerator.generate(request));
-        return new ResponseEntity<>(responseBody, HttpStatus.OK);
+        return poaGenerator.generate(request);
     }
 
 }
