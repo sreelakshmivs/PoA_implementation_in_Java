@@ -32,19 +32,19 @@ public class PoaGenerator {
     @Autowired
     PoaRepository poaRepository;
 
-    public String generate() {
+    public String generate(final String agentPublicKey) {
         long timestamp = System.currentTimeMillis();
         // TODO: Handle the case where this is null.
         final Poa poaOnboarding = poaRepository.readLatest();
 
-        String publicKey;
+        String principlePublicKey;
         String principalName;
 
         try {
             final KeyStore keyStore = KeyStore.getInstance("PKCS12");
             keyStore.load(KEY_STORE.getInputStream(), KEY_STORE_PASSWORD.toCharArray());
             principalName = keyStore.aliases().nextElement();
-            publicKey = getPublicKey(keyStore, principalName);
+            principlePublicKey = getPublicKey(keyStore, principalName);
         } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException e) {
             e.printStackTrace();
             throw new InternalServerErrorException("Failed to read public data from key store");
@@ -57,8 +57,8 @@ public class PoaGenerator {
                 .claim("destinationNetworkId", poaOnboarding.getDestinationNetworkId())
                 .claim("transferable", "0")
                 .claim("proofOfChain", "<Not yet available>") // TODO: Change
-                .claim("principlePublicKey", publicKey)
-                .claim("agentPublicKey", "<Not yet available>")
+                .claim("principlePublicKey", principlePublicKey)
+                .claim("agentPublicKey", agentPublicKey)
                 .claim("metadata", generateMetadata(principalName))
                 .compact();
     }

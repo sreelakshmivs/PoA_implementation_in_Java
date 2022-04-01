@@ -11,6 +11,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
@@ -58,9 +60,10 @@ public class Controller {
         return "PoA successfully retrieved from the PoA Onboarding controller.";
     }
 
-    @GetMapping("/poa-subcontractor")
-    public ResponseEntity<Map<String, String>> generatePoaSubcontractor() {
-        final Map<String, String> responseBody = Map.of("token", poaGenerator.generate());
+    @PostMapping("/poa-subcontractor")
+    public ResponseEntity<Map<String, String>> generatePoaSubcontractor(
+            final @RequestBody String request) {
+        final Map<String, String> responseBody = Map.of("token", poaGenerator.generate(request));
         return new ResponseEntity<>(responseBody, HttpStatus.OK);
     }
 
