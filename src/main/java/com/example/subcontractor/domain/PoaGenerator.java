@@ -12,6 +12,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import com.example.subcontractor.Constants;
 import com.example.subcontractor.exceptions.InternalServerErrorException;
+import com.example.subcontractor.exceptions.NotFoundException;
 import com.example.subcontractor.repositories.PoaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +37,10 @@ public class PoaGenerator {
         long timestamp = System.currentTimeMillis();
         // TODO: Handle the case where this is null.
         final Poa poaOnboarding = poaRepository.readLatest();
+
+        if (poaOnboarding == null) {
+            throw new NotFoundException("PoA onboarding not found in database");
+        }
 
         String principlePublicKey;
         String principalName;

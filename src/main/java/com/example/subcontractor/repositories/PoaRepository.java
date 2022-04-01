@@ -12,7 +12,6 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import com.example.subcontractor.domain.Poa;
 import com.example.subcontractor.exceptions.InternalServerErrorException;
-import com.example.subcontractor.exceptions.NotFoundException;
 
 @Repository
 public class PoaRepository {
@@ -43,7 +42,7 @@ public class PoaRepository {
         try {
             return jdbcTemplate.queryForObject(SQL_GET_LATEST, userRowMapper);
         } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException("No PoA found");
+            return null;
         }
     }
 

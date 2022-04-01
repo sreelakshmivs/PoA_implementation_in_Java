@@ -47,8 +47,8 @@ public class Controller {
         HttpEntity<String> response;
         try {
             response = restTemplate.getForEntity(AH_ONBOARDING_URI, String.class);
-        } catch (Exception ex) {
-            System.out.println(ex);
+        } catch (final Exception e) {
+            e.printStackTrace();
             throw new BadGatewayException(
                     "Failed to retrieve PoA from Arrowhead PoaOnboarding controller");
         }
