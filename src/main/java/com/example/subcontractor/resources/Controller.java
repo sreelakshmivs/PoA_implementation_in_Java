@@ -4,12 +4,11 @@ import java.util.Map;
 import com.example.subcontractor.domain.PoaGenerator;
 import com.example.subcontractor.domain.PoaParser;
 import com.example.subcontractor.exceptions.BadGatewayException;
+import com.example.subcontractor.exceptions.BadRequestException;
 import com.example.subcontractor.repositories.PoaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -62,6 +61,10 @@ public class Controller {
 
     @PostMapping("/poa-subcontractor")
     public String generatePoaSubcontractor(final @RequestBody Map<String, String> request) {
+
+        if (!request.containsKey("name") || !request.containsKey("publicKey")) {
+            throw new BadRequestException("Invalid request body, must contain 'name' and 'publicKey'");
+        }
         final String agentName = request.get("name");
         final String agentPublicKey = request.get("publicKey");
         return poaGenerator.generate(agentName, agentPublicKey);
