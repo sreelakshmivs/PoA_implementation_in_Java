@@ -25,15 +25,15 @@ public class PoaParser {
     Resource ONBOARDING_PUBLIC_KEY;
 
     public Claims getClaims(final String token) {
-        final PublicKey onboardingControllerPublicKey = readPublicKey();
+        final PublicKey onboardingControllerPublicKey = readOnboadingControllerPublicKey();
         return Jwts.parser()
                 .setSigningKey(onboardingControllerPublicKey)
                 .parseClaimsJws(token)
                 .getBody();
     }
 
-    private PublicKey readPublicKey() {
-        final String keyString = readPublicKeyAsString()
+    private PublicKey readOnboadingControllerPublicKey() {
+        final String keyString = readOnboardingControllerPublicKeyAsString()
                 .replace("-----BEGIN PUBLIC KEY-----", "")
                 .replaceAll("\\n", "")
                 .replace("-----END PUBLIC KEY-----", "");
@@ -49,7 +49,7 @@ public class PoaParser {
         }
     }
 
-    public String readPublicKeyAsString() {
+    public String readOnboardingControllerPublicKeyAsString() {
         try (Reader reader =
                 new InputStreamReader(ONBOARDING_PUBLIC_KEY.getInputStream(), StandardCharsets.UTF_8)) {
             return FileCopyUtils.copyToString(reader);
