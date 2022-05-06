@@ -10,6 +10,7 @@ import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import com.example.subcontractor.exceptions.BadGatewayException;
 import com.example.subcontractor.exceptions.InternalServerErrorException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureException;
 
 @Service
 public class PoaParser {
@@ -26,10 +28,14 @@ public class PoaParser {
 
     public Claims getClaims(final String token) {
         final PublicKey onboardingControllerPublicKey = readOnboadingControllerPublicKey();
-        return Jwts.parser()
-                .setSigningKey(onboardingControllerPublicKey)
-                .parseClaimsJws(token)
-                .getBody();
+        try {
+            return Jwts.parser()
+            .setSigningKey(onboardingControllerPublicKey)
+            .parseClaimsJws(token)
+            .getBody();
+        } catch (final SignatureException e) {
+            throw new BadGatewayException(e.getMessage());
+        }
     }
 
     private PublicKey readOnboadingControllerPublicKey() {

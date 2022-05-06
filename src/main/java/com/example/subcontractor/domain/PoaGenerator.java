@@ -29,9 +29,6 @@ public class PoaGenerator {
     @Value("${server.ssl.key-store}")
     private Resource KEY_STORE;
 
-    @Value("${server.ssl.key-password}")
-    private String KEY_PASSWORD;
-
     @Value("${server.ssl.key-store-password}")
     private String KEY_STORE_PASSWORD;
 
